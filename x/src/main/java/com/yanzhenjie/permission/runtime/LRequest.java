@@ -20,8 +20,9 @@ import android.util.Log;
 
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.Rationale;
+import com.yanzhenjie.permission.checker.DoubleChecker;
 import com.yanzhenjie.permission.checker.PermissionChecker;
-import com.yanzhenjie.permission.checker.StrictChecker;
+import com.yanzhenjie.permission.checker.StandardChecker;
 import com.yanzhenjie.permission.source.Source;
 
 import java.util.ArrayList;
@@ -34,13 +35,15 @@ import static java.util.Arrays.asList;
  */
 class LRequest implements PermissionRequest {
 
-    private static final PermissionChecker STRICT_CHECKER = new StrictChecker();
+    private static final PermissionChecker STANDARD_CHECKER = new StandardChecker();
+    private static final PermissionChecker DOUBLE_CHECKER = new DoubleChecker();
 
     private Source mSource;
 
     private String[] mPermissions;
     private Action<List<String>> mGranted;
     private Action<List<String>> mDenied;
+    private boolean isEnable = true;
 
     LRequest(Source source) {
         this.mSource = source;
@@ -49,6 +52,12 @@ class LRequest implements PermissionRequest {
     @Override
     public PermissionRequest permission(String... permissions) {
         this.mPermissions = permissions;
+        return this;
+    }
+
+    @Override
+    public PermissionRequest setStrictModeEnable(boolean isEnable) {
+        this.isEnable = isEnable;
         return this;
     }
 
@@ -74,7 +83,7 @@ class LRequest implements PermissionRequest {
         new AsyncTask<Void, Void, List<String>>() {
             @Override
             protected List<String> doInBackground(Void... voids) {
-                return getDeniedPermissions(STRICT_CHECKER, mSource, mPermissions);
+                return getDeniedPermissions(isEnable?DOUBLE_CHECKER:STANDARD_CHECKER, mSource, mPermissions);
             }
 
             @Override

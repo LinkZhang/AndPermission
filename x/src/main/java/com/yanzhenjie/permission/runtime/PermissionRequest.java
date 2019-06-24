@@ -31,6 +31,8 @@ public interface PermissionRequest {
      */
     PermissionRequest permission(String... permissions);
 
+    PermissionRequest setStrictModeEnable(boolean isEnable);
+
     /**
      * Set request rationale.
      */

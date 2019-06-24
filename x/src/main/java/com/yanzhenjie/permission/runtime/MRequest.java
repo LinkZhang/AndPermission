@@ -55,6 +55,7 @@ class MRequest implements PermissionRequest, RequestExecutor, BridgeRequest.Call
     private Action<List<String>> mDenied;
 
     private String[] mDeniedPermissions;
+    private boolean isEnable = true;
 
     MRequest(Source source) {
         this.mSource = source;
@@ -63,6 +64,12 @@ class MRequest implements PermissionRequest, RequestExecutor, BridgeRequest.Call
     @Override
     public PermissionRequest permission(String... permissions) {
         this.mPermissions = permissions;
+        return this;
+    }
+
+    @Override
+    public PermissionRequest setStrictModeEnable(boolean isEnable) {
+        this.isEnable = isEnable;
         return this;
     }
 
@@ -119,7 +126,7 @@ class MRequest implements PermissionRequest, RequestExecutor, BridgeRequest.Call
         new AsyncTask<Void, Void, List<String>>() {
             @Override
             protected List<String> doInBackground(Void... voids) {
-                return getDeniedPermissions(DOUBLE_CHECKER, mSource, mPermissions);
+                return getDeniedPermissions(isEnable?DOUBLE_CHECKER:STANDARD_CHECKER, mSource, mPermissions);
             }
 
             @Override

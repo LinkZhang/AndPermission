@@ -321,25 +321,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void requestPermission(String... permissions) {
         AndPermission.with(this)
-            .runtime()
-            .permission(permissions)
-            .rationale(new RuntimeRationale())
-            .onGranted(new Action<List<String>>() {
-                @Override
-                public void onAction(List<String> permissions) {
-                    toast(R.string.successfully);
-                }
-            })
-            .onDenied(new Action<List<String>>() {
-                @Override
-                public void onAction(@NonNull List<String> permissions) {
-                    toast(R.string.failure);
-                    if (AndPermission.hasAlwaysDeniedPermission(MainActivity.this, permissions)) {
-                        showSettingDialog(MainActivity.this, permissions);
+                .runtime()
+                .permission(permissions)
+                .setStrictModeEnable(false)
+                .rationale(new RuntimeRationale())
+                .onGranted(new Action<List<String>>() {
+                    @Override
+                    public void onAction(List<String> permissions) {
+                        toast(R.string.successfully);
                     }
-                }
-            })
-            .start();
+                })
+                .onDenied(new Action<List<String>>() {
+                    @Override
+                    public void onAction(@NonNull List<String> permissions) {
+                        toast(R.string.failure);
+                        if (AndPermission.hasAlwaysDeniedPermission(MainActivity.this, permissions)) {
+                            showSettingDialog(MainActivity.this, permissions);
+                        }
+                    }
+                })
+                .start();
     }
 
     /**
@@ -348,23 +349,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void showSettingDialog(Context context, final List<String> permissions) {
         List<String> permissionNames = Permission.transformText(context, permissions);
         String message = context.getString(R.string.message_permission_always_failed,
-            TextUtils.join("\n", permissionNames));
+                TextUtils.join("\n", permissionNames));
 
         new AlertDialog.Builder(context).setCancelable(false)
-            .setTitle(R.string.title_dialog)
-            .setMessage(message)
-            .setPositiveButton(R.string.setting, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    setPermission();
-                }
-            })
-            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            })
-            .show();
+                .setTitle(R.string.title_dialog)
+                .setMessage(message)
+                .setPositiveButton(R.string.setting, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        setPermission();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .show();
     }
 
     /**
@@ -389,22 +390,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void requestNotification() {
         AndPermission.with(this)
-            .notification()
-            .permission()
-            .rationale(new NotifyRationale())
-            .onGranted(new Action<Void>() {
-                @Override
-                public void onAction(Void data) {
-                    toast(R.string.successfully);
-                }
-            })
-            .onDenied(new Action<Void>() {
-                @Override
-                public void onAction(Void data) {
-                    toast(R.string.failure);
-                }
-            })
-            .start();
+                .notification()
+                .permission()
+                .rationale(new NotifyRationale())
+                .onGranted(new Action<Void>() {
+                    @Override
+                    public void onAction(Void data) {
+                        toast(R.string.successfully);
+                    }
+                })
+                .onDenied(new Action<Void>() {
+                    @Override
+                    public void onAction(Void data) {
+                        toast(R.string.failure);
+                    }
+                })
+                .start();
     }
 
     /**
@@ -412,22 +413,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void requestNotificationListener() {
         AndPermission.with(this)
-            .notification()
-            .listener()
-            .rationale(new NotifyListenerRationale())
-            .onGranted(new Action<Void>() {
-                @Override
-                public void onAction(Void data) {
-                    toast(R.string.successfully);
-                }
-            })
-            .onDenied(new Action<Void>() {
-                @Override
-                public void onAction(Void data) {
-                    toast(R.string.failure);
-                }
-            })
-            .start();
+                .notification()
+                .listener()
+                .rationale(new NotifyListenerRationale())
+                .onGranted(new Action<Void>() {
+                    @Override
+                    public void onAction(Void data) {
+                        toast(R.string.successfully);
+                    }
+                })
+                .onDenied(new Action<Void>() {
+                    @Override
+                    public void onAction(Void data) {
+                        toast(R.string.failure);
+                    }
+                })
+                .start();
     }
 
     /**
@@ -435,27 +436,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void requestPermissionForInstallPackage() {
         AndPermission.with(this)
-            .runtime()
-            .permission(Permission.Group.STORAGE)
-            .rationale(new RuntimeRationale())
-            .onGranted(new Action<List<String>>() {
-                @Override
-                public void onAction(List<String> data) {
-                    new WriteApkTask(MainActivity.this, new Runnable() {
-                        @Override
-                        public void run() {
-                            installPackage();
-                        }
-                    }).execute();
-                }
-            })
-            .onDenied(new Action<List<String>>() {
-                @Override
-                public void onAction(List<String> data) {
-                    toast(R.string.message_install_failed);
-                }
-            })
-            .start();
+                .runtime()
+                .permission(Permission.Group.STORAGE)
+                .rationale(new RuntimeRationale())
+                .onGranted(new Action<List<String>>() {
+                    @Override
+                    public void onAction(List<String> data) {
+                        new WriteApkTask(MainActivity.this, new Runnable() {
+                            @Override
+                            public void run() {
+                                installPackage();
+                            }
+                        }).execute();
+                    }
+                })
+                .onDenied(new Action<List<String>>() {
+                    @Override
+                    public void onAction(List<String> data) {
+                        toast(R.string.message_install_failed);
+                    }
+                })
+                .start();
     }
 
     /**
@@ -463,22 +464,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void installPackage() {
         AndPermission.with(this)
-            .install()
-            .file(new File(Environment.getExternalStorageDirectory(), "android.apk"))
-            .rationale(new InstallRationale())
-            .onGranted(new Action<File>() {
-                @Override
-                public void onAction(File data) {
-                    // Installing.
-                }
-            })
-            .onDenied(new Action<File>() {
-                @Override
-                public void onAction(File data) {
-                    // The user refused to install.
-                }
-            })
-            .start();
+                .install()
+                .file(new File(Environment.getExternalStorageDirectory(), "android.apk"))
+                .rationale(new InstallRationale())
+                .onGranted(new Action<File>() {
+                    @Override
+                    public void onAction(File data) {
+                        // Installing.
+                    }
+                })
+                .onDenied(new Action<File>() {
+                    @Override
+                    public void onAction(File data) {
+                        // The user refused to install.
+                    }
+                })
+                .start();
     }
 
     private void requestPermissionForAlertWindow() {
