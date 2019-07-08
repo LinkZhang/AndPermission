@@ -16,7 +16,6 @@
 package com.yanzhenjie.permission.runtime;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import com.yanzhenjie.permission.Action;
@@ -93,7 +92,7 @@ class MRequest implements PermissionRequest, RequestExecutor, BridgeRequest.Call
 
     @Override
     public void start() {
-        List<String> deniedList = getDeniedPermissions(STANDARD_CHECKER, mSource, mPermissions);
+        List<String> deniedList = getDeniedPermissions(isEnable ? DOUBLE_CHECKER : STANDARD_CHECKER, mSource, mPermissions);
         mDeniedPermissions = deniedList.toArray(new String[deniedList.size()]);
         if (mDeniedPermissions.length > 0) {
             List<String> rationaleList = getRationalePermissions(mSource, mDeniedPermissions);
@@ -123,21 +122,12 @@ class MRequest implements PermissionRequest, RequestExecutor, BridgeRequest.Call
 
     @Override
     public void onCallback() {
-        new AsyncTask<Void, Void, List<String>>() {
-            @Override
-            protected List<String> doInBackground(Void... voids) {
-                return getDeniedPermissions(isEnable?DOUBLE_CHECKER:STANDARD_CHECKER, mSource, mPermissions);
-            }
-
-            @Override
-            protected void onPostExecute(List<String> deniedList) {
-                if (deniedList.isEmpty()) {
-                    callbackSucceed();
-                } else {
-                    callbackFailed(deniedList);
-                }
-            }
-        }.execute();
+        List<String> deniedList = getDeniedPermissions(isEnable ? DOUBLE_CHECKER : STANDARD_CHECKER, mSource, mPermissions);
+        if (deniedList.isEmpty()) {
+            callbackSucceed();
+        } else {
+            callbackFailed(deniedList);
+        }
     }
 
     /**
