@@ -15,7 +15,6 @@
  */
 package com.yanzhenjie.permission.runtime;
 
-import android.os.AsyncTask;
 import android.util.Log;
 
 import com.yanzhenjie.permission.Action;
@@ -80,21 +79,12 @@ class LRequest implements PermissionRequest {
 
     @Override
     public void start() {
-        new AsyncTask<Void, Void, List<String>>() {
-            @Override
-            protected List<String> doInBackground(Void... voids) {
-                return getDeniedPermissions(isEnable?DOUBLE_CHECKER:STANDARD_CHECKER, mSource, mPermissions);
-            }
-
-            @Override
-            protected void onPostExecute(List<String> deniedList) {
-                if (deniedList.isEmpty()) {
-                    callbackSucceed();
-                } else {
-                    callbackFailed(deniedList);
-                }
-            }
-        }.execute();
+        List<String> deniedList = getDeniedPermissions(isEnable ? DOUBLE_CHECKER : STANDARD_CHECKER, mSource, mPermissions);
+        if (deniedList.isEmpty()) {
+            callbackSucceed();
+        } else {
+            callbackFailed(deniedList);
+        }
     }
 
     /**
